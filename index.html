@@ -1,0 +1,77 @@
+<!DOCTYPE Html>
+<html>
+    <head>
+        <title>Sample Analytical report/ Severity of Recent Repairs</title>
+        <!--Link to Leaflet CSS document-->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+        <!--linking jQuery library-->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <!--Link to Leaflet JS API-->
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+        <style type= "text/css">
+        #map {
+            height: 100%;
+        }
+        #Name {
+            margin: 0;
+        }
+        #DateReported {
+            font-size: .9em;
+            line-height: 1.5em;
+            margin: 0;
+        }
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+
+        }
+        </style>
+
+    </head>
+    <body>
+        <div id = 'map'></div>
+        <script>
+            var options = {
+                center: [43.546731, -80.251156],
+                zoom: 12
+            }
+            var myMap = L.map('map',options);
+
+            var tiles = L.tileLayer('https://api.mapbox.com/styles/v1/kquainoo/cklylcqdc48id17nyh5g5xzou/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1Ijoia3F1YWlub28iLCJhIjoiY2tmb3ZsMXFsMDFsdzJxb3hsenhiam0wciJ9.Hycza97C9ZS4KEzKdP-ofA', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">MapboxStudio</a>',
+                accessToken: 'pk.eyJ1Ijoia3F1YWlub28iLCJhIjoiY2tmb3ZsMXFsMDFsdzJxb3hsenhiam0wciJ9.Hycza97C9ZS4KEzKdP-ofA'
+                }).addTo(myMap);
+
+            function onEachFeature(feature,layer) {
+                //user clicks marker to get info
+                
+                var popupContent = "<h3 id='Name'>" + feature.properties.Name + "</h3><br/><p id ='date reported'>" + "reported on " + feature.properties.DateReported + "</p>";
+
+                layer.bindPopup(popupContent)
+            }
+            var Roadsites;
+
+            $.getJSON ('https://raw.githubusercontent.com/kQuainoo/CoolSpacesTO/main/RoadRepairSites.geojson', function(json){
+                Roadsites = L.geoJson(json, {
+
+                    style: {
+                        "color":"#1a7485",
+                        "weight": 1.5,
+                        "opacity": 0.9
+                    },
+                    onEachFeature: onEachFeature
+
+                }).addTo(myMap);
+            });
+
+            
+
+
+                
+
+        </script>
+    </body>>
+</html>
