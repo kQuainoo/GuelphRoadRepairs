@@ -6,6 +6,8 @@
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
         <!--linking jQuery library-->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <!--link to turf library-->
+        <script src="https://unpkg.com/@turf/turf@6.3.0/turf.min.js"></script>
         <!--Link to Leaflet JS API-->
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
         <style type= "text/css">
@@ -51,26 +53,48 @@
                 var popupContent = "<h3 id='Name'>" + feature.properties.Name + "</h3><br/><p id ='date reported'>" + "reported on " + feature.properties.DateReported + "</p>";
 
                 layer.bindPopup(popupContent)
+                var radiusvalue = parseInt(feature.properties.LabelID);
+
+                
             }
+            
             var Roadsites;
+            var jsnfeature;
+            var buffeature;
+
+            // subset of points loaded for turf buffer func
+            var Roadsitesgeojson = {
+                "type": "FeatureCollection",
+                "name": "RoadRepairSites",
+                "features": [{ "type": "Feature", "properties": { "Address": "85 Cambridge St Guelph ON  N1H", "Name": "Person A", "LabelID": 1, "DateReported": "2021/03/04" }, "geometry": { "type": "Point", "coordinates": [ -80.25843, 43.54167 ] } },{ "type": "Feature", "properties": { "Address": "225 Edinburgh Rd S Guelph ON  N1G", "Name": "Person B", "LabelID": 2, "DateReported": "2021/03/02" }, "geometry": { "type": "Point", "coordinates": [ -80.24932, 43.53093 ] } },{ "type": "Feature", "properties": { "Address": "385 Woolwich St Guelph ON  N1H", "Name": "Person C", "LabelID": 3, "DateReported": "2021/03/02" }, "geometry": { "type": "Point", "coordinates": [ -80.26005, 43.55257 ] }}]
+            };
+
+
+            console.log("loaded")
 
             $.getJSON ('https://raw.githubusercontent.com/kQuainoo/CoolSpacesTO/main/RoadRepairSites.geojson', function(json){
                 Roadsites = L.geoJson(json, {
+                    // markers
 
                     style: {
                         "color":"#1a7485",
                         "weight": 1.5,
                         "opacity": 0.9
                     },
+                    
                     onEachFeature: onEachFeature
-
+                    
                 }).addTo(myMap);
+
+                // geojson type required as input to turf func
+
+                jsnfeature = turf.buffer(Roadsitesgeojson, 0.6 , {units: "kilometers"});
+
+                buffeature = L.geoJSON(jsnfeature, {style: {color: "yellow", dashArray: "5,5", fillOpacity:0}}).addTo(myMap);
+     
+
             });
-
-            
-
-
-                
+          
 
         </script>
     </body>>
